@@ -21,7 +21,7 @@
    <children>
       <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0" GridPane.rowIndex="1">
          <children>
-            <Button fx:id="infoBtn" mnemonicParsing="false" onAction="#showInfo" text="Button">
+            <Button fx:id="infoBtn" mnemonicParsing="false" onAction="#showInfo" text="Print">
                <font>
                   <Font size="15.0" />
                </font>
@@ -29,7 +29,7 @@
                   <Insets right="10.0" />
                </HBox.margin>
             </Button>
-            <Label fx:id="infoLbl" text="Label">
+            <Label fx:id="infoLbl" text="Font to string label">
                <font>
                   <Font size="15.0" />
                </font>
