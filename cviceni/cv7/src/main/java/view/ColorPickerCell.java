@@ -14,23 +14,26 @@ public class ColorPickerCell extends TableCell<MyFont, Color> {
         this.itemProperty().bindBidirectional(picker.valueProperty());
 
         picker.setOnAction(event -> {
-            System.out.println("Action");
+            System.out.println("Old val: " + this.getItem());
+            System.out.println("New val:  " + picker.getValue());
             this.commitEdit(picker.getValue());
 //            this.setItem(picker.getValue());
             this.getTableView().refresh();
         });
 
         setGraphic(picker);
+        picker.prefWidthProperty().bind(this.widthProperty());
     }
 
     @Override
     protected void updateItem(Color item, boolean empty) {
         super.updateItem(item, empty);
 
-        if (empty) {
+        if(empty) {
             setGraphic(null);
         } else {
             picker.setValue(item);
+            setGraphic(picker);
         }
     }
 
