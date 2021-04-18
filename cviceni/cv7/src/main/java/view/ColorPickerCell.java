@@ -14,10 +14,10 @@ public class ColorPickerCell extends TableCell<MyFont, Color> {
         this.itemProperty().bindBidirectional(picker.valueProperty());
 
         picker.setOnAction(event -> {
-            System.out.println("Old val: " + this.getItem());
-            System.out.println("New val:  " + picker.getValue());
+            // this is probably better to do in commitEdit? (so the tableview sees it as edit?)
+//            this.getTableView().getItems().get(this.getIndex()).setColor(picker.getValue());
+
             this.commitEdit(picker.getValue());
-//            this.setItem(picker.getValue());
             this.getTableView().refresh();
         });
 
@@ -41,6 +41,6 @@ public class ColorPickerCell extends TableCell<MyFont, Color> {
     public void commitEdit(Color newValue) {
         super.commitEdit(newValue);
 
-        System.out.println("Commit " + newValue.toString());
+        this.getTableView().getItems().get(this.getIndex()).setColor(newValue);
     }
 }

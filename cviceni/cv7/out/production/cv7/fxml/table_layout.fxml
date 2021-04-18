@@ -29,7 +29,7 @@
                   <Insets right="10.0" />
                </HBox.margin>
             </Button>
-            <Label fx:id="infoLbl" text="Font to string label">
+            <Label fx:id="infoLbl" text="Tip: You can add (copy)/ delete fonts through context menu (right click)">
                <font>
                   <Font size="15.0" />
                </font>

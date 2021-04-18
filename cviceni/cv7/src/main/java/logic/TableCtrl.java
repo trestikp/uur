@@ -48,8 +48,7 @@ public class TableCtrl {
             Bind column values
          */
         nameCol.setCellValueFactory(new PropertyValueFactory<>("name"));
-//        colorCol.setCellValueFactory(new PropertyValueFactory<>("color"));
-        colorCol.setCellValueFactory(cellData -> cellData.getValue().colorProperty());
+        colorCol.setCellValueFactory(new PropertyValueFactory<>("color"));
         emphasisCol.setCellValueFactory(new PropertyValueFactory<>("emphasis"));
         sizeCol.setCellValueFactory(new PropertyValueFactory<>("size"));
         visibilityCol.setCellValueFactory(new PropertyValueFactory<>("visibility"));
@@ -99,7 +98,8 @@ public class TableCtrl {
             }
         }));
 
-//        sizeCol.setOnEditCommit(event -> tableView.refresh());
+        //attempt to automatically show resized rows, after font size change
+//        sizeCol.onEditCommitProperty().addListener(observable -> tableView.refresh());
 
         /*
             ContextMenu for "Adding" (Copying) and removing items
@@ -118,6 +118,26 @@ public class TableCtrl {
         tableView.setEditable(true);
         tableView.getColumns().addAll(nameCol, colorCol, emphasisCol, sizeCol, visibilityCol, previewCol);
         tableView.setItems(data);
+
+        /*
+            Column widths
+         */
+        //min sizes
+        //min windows size is 800 - paddings, borders and w/e lets say 750
+        nameCol.setMinWidth(150);
+        colorCol.setMinWidth(70);
+        emphasisCol.setMinWidth(95);
+        sizeCol.setMinWidth(60);
+        visibilityCol.setMinWidth(95);
+        previewCol.setMinWidth(280);
+
+        //dynamic sizes
+        nameCol.prefWidthProperty().bind(tableView.widthProperty().multiply(0.2));
+        colorCol.prefWidthProperty().bind(tableView.widthProperty().multiply(0.12));
+        emphasisCol.prefWidthProperty().bind(tableView.widthProperty().multiply(0.15));
+        sizeCol.prefWidthProperty().bind(tableView.widthProperty().multiply(0.08));
+        visibilityCol.prefWidthProperty().bind(tableView.widthProperty().multiply(0.15));
+        previewCol.prefWidthProperty().bind(tableView.widthProperty().multiply(0.3));
     }
 
     private ContextMenu createContextMenu() {
@@ -153,7 +173,8 @@ public class TableCtrl {
             int index = tableView.getSelectionModel().getSelectedIndex();
             infoLbl.setText(data.get(index).toString());
         } else {
-            infoLbl.setText("No font selected");
+            infoLbl.setText("No font selected (Tip: You can add (copy)/" +
+                    " delete fonts through context menu (right click))");
         }
     }
 }

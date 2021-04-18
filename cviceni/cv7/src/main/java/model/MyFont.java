@@ -36,7 +36,7 @@ public class MyFont implements Cloneable {
                     case BOLD: out.setFont(Font.font(name.get(), FontWeight.BOLD, size.get())); break;
                 }
                 out.setVisible(visibility.get());
-                out.setStyle("-fx-fill: " + color.get().toString().substring(2) + ";");
+                out.setStyle("-fx-fill: #" + color.get().toString().substring(2) + ";");
 
                 return out;
             }
