@@ -1,9 +1,0 @@
-<component name="ArtifactManager">
-  <artifact type="jar" name="cv1:jar">
-    <output-path>$PROJECT_DIR$/out/artifacts/cv1_jar</output-path>
-    <root id="archive" name="cv1.jar">
-      <element id="module-output" name="cv1" />
-      <element id="module-source" name="cv1" />
-    </root>
-  </artifact>
-</component>
