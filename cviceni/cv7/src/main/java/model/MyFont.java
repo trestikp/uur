@@ -8,7 +8,7 @@ import javafx.scene.text.FontPosture;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 
-public class MyFont {
+public class MyFont implements Cloneable {
 
     private final StringProperty name = new SimpleStringProperty();
     private final ObjectProperty<Color> color = new SimpleObjectProperty<>();
@@ -103,5 +103,14 @@ public class MyFont {
     public String toString() {
         return name.get() + " of size " + size.get() + " in style " + emphasis.get() + " with color " + color.get() +
                 " is " + (visibility.get() ? "visible" : "invisible");
+    }
+
+    public void setColor(Color color) {
+        this.color.set(color);
+    }
+
+    @Override
+    public MyFont clone() throws CloneNotSupportedException {
+        return new MyFont(this.getName(), this.getColor(), this.getEmphasis(), this.getSize(), this.isVisibility());
     }
 }

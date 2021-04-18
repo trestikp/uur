@@ -3,10 +3,7 @@ package logic;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
+import javafx.scene.control.*;
 import javafx.scene.control.cell.ComboBoxTableCell;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
@@ -16,7 +13,6 @@ import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.util.StringConverter;
 import javafx.util.converter.BooleanStringConverter;
-import javafx.util.converter.NumberStringConverter;
 import model.Emphasis;
 import model.FontGenerator;
 import model.MyFont;
@@ -52,7 +48,8 @@ public class TableCtrl {
             Bind column values
          */
         nameCol.setCellValueFactory(new PropertyValueFactory<>("name"));
-        colorCol.setCellValueFactory(new PropertyValueFactory<>("color"));
+//        colorCol.setCellValueFactory(new PropertyValueFactory<>("color"));
+        colorCol.setCellValueFactory(cellData -> cellData.getValue().colorProperty());
         emphasisCol.setCellValueFactory(new PropertyValueFactory<>("emphasis"));
         sizeCol.setCellValueFactory(new PropertyValueFactory<>("size"));
         visibilityCol.setCellValueFactory(new PropertyValueFactory<>("visibility"));
@@ -62,15 +59,18 @@ public class TableCtrl {
             Make columns editable
          */
         nameCol.setCellFactory(TextFieldTableCell.forTableColumn());
-//        nameCol.setOnEditCommit(event -> {
-//            if(!Font.getFamilies().contains(event.getNewValue())) {
-//                tableView.refresh();
-//                return;
-//            } else {
-//                tableView.getSelectionModel().getSelectedItem().nameProperty().set(event.getNewValue());
-//            }
-//        });
-        colorCol.setCellFactory(col -> new ColorPickerCell());
+
+        //Check if new font is in the system
+        nameCol.setOnEditCommit(event -> {
+            if(!Font.getFamilies().contains(event.getNewValue())) {
+                tableView.refresh();
+                return;
+            } else {
+                tableView.getSelectionModel().getSelectedItem().nameProperty().set(event.getNewValue());
+            }
+        });
+
+        colorCol.setCellFactory(event -> new ColorPickerCell());
         emphasisCol.setCellFactory(ComboBoxTableCell.forTableColumn(Emphasis.values()));
         visibilityCol.setCellFactory(ComboBoxTableCell.forTableColumn(new BooleanStringConverter(),
                                                                       new Boolean[]{true, false}));
@@ -99,6 +99,19 @@ public class TableCtrl {
             }
         }));
 
+//        sizeCol.setOnEditCommit(event -> tableView.refresh());
+
+        /*
+            ContextMenu for "Adding" (Copying) and removing items
+         */
+        tableView.setRowFactory(param -> {
+            TableRow<MyFont> row = new TableRow<>();
+
+            row.contextMenuProperty().set(createContextMenu());
+
+            return row;
+        });
+
         /*
             Add columns and data
          */
@@ -107,10 +120,38 @@ public class TableCtrl {
         tableView.setItems(data);
     }
 
+    private ContextMenu createContextMenu() {
+        ContextMenu cm = new ContextMenu();
+        MenuItem copy = new MenuItem("Copy entry");
+        MenuItem delete = new MenuItem("Remove entry");
+
+        copy.setOnAction(event -> {
+            MyFont item = tableView.getSelectionModel().getSelectedItem();
+            int index = tableView.getSelectionModel().getSelectedIndex();
+
+            try {
+                data.add(index + 1, item.clone());
+            } catch (CloneNotSupportedException e) {
+                //again dialog or something would be nice there
+                return;
+            }
+        });
+
+        delete.setOnAction(event -> {
+            MyFont item = tableView.getSelectionModel().getSelectedItem();
+            data.remove(item);
+        });
+
+        cm.getItems().addAll(copy, delete);
+
+        return cm;
+    }
 
     public void showInfo(ActionEvent actionEvent) {
         if(tableView.getSelectionModel().getSelectedItem() != null) {
-            infoLbl.setText(tableView.getSelectionModel().getSelectedItem().toString());
+//            infoLbl.setText(tableView.getSelectionModel().getSelectedItem().toString());
+            int index = tableView.getSelectionModel().getSelectedIndex();
+            infoLbl.setText(data.get(index).toString());
         } else {
             infoLbl.setText("No font selected");
         }

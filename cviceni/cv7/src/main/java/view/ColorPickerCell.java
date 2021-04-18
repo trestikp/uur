@@ -1,32 +1,43 @@
 package view;
 
-import javafx.scene.Scene;
 import javafx.scene.control.ColorPicker;
 import javafx.scene.control.TableCell;
-import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
-import javafx.stage.Stage;
 import model.MyFont;
 
 public class ColorPickerCell extends TableCell<MyFont, Color> {
     ColorPicker picker;
 
+    public ColorPickerCell() {
+        picker = new ColorPicker();
+
+        this.itemProperty().bindBidirectional(picker.valueProperty());
+
+        picker.setOnAction(event -> {
+            System.out.println("Action");
+            this.commitEdit(picker.getValue());
+//            this.setItem(picker.getValue());
+            this.getTableView().refresh();
+        });
+
+        setGraphic(picker);
+    }
+
     @Override
-    public void startEdit() {
-        super.startEdit();
+    protected void updateItem(Color item, boolean empty) {
+        super.updateItem(item, empty);
 
-        if(picker == null) {
-             picker = new ColorPicker();
-
-             Stage s = new Stage();
-             VBox pane = new VBox();
-             pane.getChildren().add(picker);
-             s.setScene(new Scene(pane));
-             s.show();
-
-             //TODO
+        if (empty) {
+            setGraphic(null);
         } else {
-            cancelEdit();
+            picker.setValue(item);
         }
+    }
+
+    @Override
+    public void commitEdit(Color newValue) {
+        super.commitEdit(newValue);
+
+        System.out.println("Commit " + newValue.toString());
     }
 }
