@@ -30,4 +30,8 @@ public class TreeNode {
     public ObjectProperty<NodeType> typeProperty() {
         return type;
     }
+
+    public boolean isFile() {
+        return type.getValue() == NodeType.FILE;
+    }
 }

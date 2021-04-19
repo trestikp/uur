@@ -1,11 +1,13 @@
 package logic;
 
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.TreeItem;
-import javafx.scene.control.TreeView;
+import javafx.scene.control.*;
 import model.NodeType;
 import model.TreeNode;
 import view.TreeNodeCell;
+
+import java.util.Optional;
 
 public class TreeCtrl {
 
@@ -42,5 +44,86 @@ public class TreeCtrl {
         treeView.setEditable(true);
         treeView.setRoot(rootItem);
         treeView.setCellFactory(e -> new TreeNodeCell());
+        treeView.setCellFactory(e -> {
+            TreeNodeCell item = new TreeNodeCell();
+
+            item.contextMenuProperty().set(createContextMenu());
+
+            return item;
+        });
+    }
+
+    private ContextMenu createContextMenu() {
+        ContextMenu menu = new ContextMenu();
+        MenuItem createDir = new MenuItem("Create dir");
+        MenuItem createFile = new MenuItem("Create file");
+        MenuItem delete = new MenuItem("Remove node");
+
+        createDir.setOnAction(event -> {
+
+        });
+
+        createFile.setOnAction(e -> createNode(NodeType.FILE));
+        createDir.setOnAction(e -> createNode(NodeType.DIR));
+        delete.setOnAction(this::removeNode);
+
+        menu.getItems().addAll(createDir, createFile, delete);
+
+        return menu;
+    }
+
+    private void createNode(NodeType type) {
+        TreeItem<TreeNode> selected = treeView.getSelectionModel().getSelectedItem();
+
+        if(selected.getValue().isFile()) {
+            showAlert("Node creation error", "Cannot create node",
+                    "The parent node is a file! Cannot create children for a file.", Alert.AlertType.ERROR);
+            return;
+        }
+
+        TreeItem<TreeNode> ti = new TreeItem<>(new TreeNode("", type));
+
+        selected.getChildren().add(ti);
+    }
+
+    private void removeNode(ActionEvent event) {
+//        int index = treeView.getSelectionModel().getSelectedIndex();
+        TreeItem<TreeNode> item = treeView.getSelectionModel().getSelectedItem();
+
+        if(item == treeView.getRoot()) {
+            showAlert("Node removal error", "Cannot remove node",
+                    "You cannot remove ROOT node!!!", Alert.AlertType.ERROR);
+            return;
+        }
+
+        Alert confirmation =  new Alert(Alert.AlertType.CONFIRMATION);
+
+        confirmation.setTitle("Node deletion");
+        confirmation.setHeaderText("Do you wish to delete selected node and all its children?");
+        confirmation.setContentText("Node " + item.getValue().getName() + " and all its children will be" +
+                " irreversibly removed");
+
+        ButtonType confirm = new ButtonType("Yes, delete");
+        ButtonType cancel = new ButtonType("No, cancel");
+
+        confirmation.getButtonTypes().setAll(cancel, confirm);
+
+        Optional<ButtonType> res = confirmation.showAndWait();
+
+        if(res.get() == confirm) {
+            item.getParent().getChildren().remove(item);
+
+            treeView.getSelectionModel().clearSelection();
+        }
+    }
+
+    private void showAlert(String title, String header, String content, Alert.AlertType type) {
+        Alert a = new Alert(type);
+
+        a.setTitle(title);
+        a.setHeaderText(header);
+        a.setContentText(content);
+
+        a.show();
     }
 }
