@@ -57,49 +57,27 @@ public class TreeNodeCell extends TreeCell<TreeNode> {
                 }
             } else {
                 this.setText(item.getName());
-//                setGraphic(createIcon());
+                setGraphic(createIcon());
             }
         }
     }
 
-//    @Override
-//    public void commitEdit(TreeNode newValue) {
-//        if(newValue.getName().equals("")) {
-//            System.out.println("name: " + this.getItem().getName());
-//
-//            Alert a = new Alert(Alert.AlertType.ERROR);
-//
-//            a.setTitle("Node edit error");
-//            a.setHeaderText("Cannot save this change");
-//            a.setContentText("Name mustn't be empty!");
-//
-//            a.showAndWait();
-//        } else {
-//            super.commitEdit(newValue);
-//        }
-//    }
+    @Override
+    public void commitEdit(TreeNode newValue) {
+        if(newValue.getName().equals("")) {
+            Alert a = new Alert(Alert.AlertType.ERROR);
 
-    //    private FlowPane createRecord() {
-//        FlowPane out = new FlowPane();
-//
-//        ImageView icon;
-//
-//        switch (this.getItem().getType()) {
-//            case FILE: icon = new ImageView(String.valueOf(this.getClass().getResource("/img/file_icon.png")));
-//            case DIR: icon = new ImageView(String.valueOf(this.getClass().getResource("/img/file_icon.png")));
-//                break;
-//            default:
-//                throw new IllegalStateException("Unexpected value: " + this.getItem().getType());
-//        }
-//
-//
-//        icon.fitHeightProperty().bind(this.heightProperty());
-//        icon.preserveRatioProperty().set(true);
-//
-//        out.getChildren().add(icon);
-//
-//        return out;
-//    }
+            a.setTitle("Node edit error");
+            a.setHeaderText("Cannot save this change");
+            a.setContentText("Name mustn't be empty!");
+
+            a.showAndWait();
+        } else {
+            super.commitEdit(newValue);
+
+            this.getTreeView().refresh();
+        }
+    }
 
     private ImageView createIcon() {
         ImageView icon;
@@ -111,7 +89,7 @@ public class TreeNodeCell extends TreeCell<TreeNode> {
                 throw new IllegalStateException("Unexpected value: " + this.getItem().getType());
         }
 
-        icon.setFitHeight(20);
+        icon.setFitHeight(30);
         icon.preserveRatioProperty().set(true);
 
         return icon;

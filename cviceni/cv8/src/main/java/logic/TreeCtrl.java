@@ -41,7 +41,6 @@ public class TreeCtrl {
         etcItem.getChildren().addAll(fstabItem, resolvItem);
         libItem.getChildren().add(jvmItem);
 
-        treeView.setEditable(true);
         treeView.setRoot(rootItem);
         treeView.setCellFactory(e -> new TreeNodeCell());
         treeView.setCellFactory(e -> {
@@ -58,10 +57,6 @@ public class TreeCtrl {
         MenuItem createDir = new MenuItem("Create dir");
         MenuItem createFile = new MenuItem("Create file");
         MenuItem delete = new MenuItem("Remove node");
-
-        createDir.setOnAction(event -> {
-
-        });
 
         createFile.setOnAction(e -> createNode(NodeType.FILE));
         createDir.setOnAction(e -> createNode(NodeType.DIR));
@@ -81,13 +76,39 @@ public class TreeCtrl {
             return;
         }
 
-        TreeItem<TreeNode> ti = new TreeItem<>(new TreeNode("", type));
+        //// START
+        /*
+            Puvodne jsem chtel udelat, ze nova polozka nema jmeno a po vytvoreni se zacne editovat (startEdit),
+            bohuzel to se mi nevydarilo, takze delam nejake genericke jmena
+         */
+
+        String name;
+
+        if(type == NodeType.DIR) {
+            name = "NewDir";
+        } else {
+            name = "NewFile";
+        }
+
+        int counter = 0;
+        for(var i : selected.getChildren()) {
+            if(i.getValue().getName().matches(name + "\\d+") || i.getValue().getName().matches(name)) {
+                counter++;
+            }
+        }
+        name += counter;
+
+        //// END
+
+        TreeItem<TreeNode> ti = new TreeItem<>(new TreeNode(name, type));
 
         selected.getChildren().add(ti);
+        selected.setExpanded(true);
+
+//        treeView.refresh();
     }
 
     private void removeNode(ActionEvent event) {
-//        int index = treeView.getSelectionModel().getSelectedIndex();
         TreeItem<TreeNode> item = treeView.getSelectionModel().getSelectedItem();
 
         if(item == treeView.getRoot()) {
